@@ -5,8 +5,8 @@ import mongoose from 'mongoose';
 import cors from 'cors';
 import dotenv from 'dotenv';
 
-import typeDefs from './graphql/typeDefs';
-import resolvers from './graphql/resolvers';
+import typeDefs from './schema/typeDefs.js';
+import resolvers from './schema/resolvers.js';
 
 
 dotenv.config();
@@ -25,7 +25,6 @@ async function startServer() {
 
 
     mongoose.connect(process.env.MONGO_URI, {
-        useNewUrlParser: true,
         useUnifiedTopology: true,
     }).then(() => {
         console.log('MongoDB connected');

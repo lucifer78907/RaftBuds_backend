@@ -1,21 +1,23 @@
-import Post from "../models/Post.js";
+import User from "../models/User.js";
+
 
 const resolvers = {
     Query: {
-        getPosts: async () => await Post.find(),
-        getPost: async (_, { id }) => await Post.findById(id),
+        getUsers: async () => {
+            const users = await User.find();
+            return users;
+        },
     },
     Mutation: {
-        createPost: async (_, { title, content }) => {
-            const newPost = new Post({ title, content });
-            return await newPost.save();
-        },
-        updatePost: async (_, { id, title, content }) => {
-            return await Post.findByIdAndUpdate(id, { title, content }, { new: true });
-        },
-        deletePost: async (_, { id }) => {
-            await Post.findByIdAndDelete(id);
-            return "Post deleted";
+        createUser: async (_, { auth0Id, username, email, profilePicture }) => {
+            let user = await User.findOne({ auth0Id });
+
+            if (!user) {
+                user = new User({ username, email, auth0Id, profilePicture });
+                await user.save();
+            }
+
+            return user;
         },
     },
 };

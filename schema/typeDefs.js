@@ -25,17 +25,15 @@ const typeDefs = gql`
 
     type Query {
         getUsers: [User]
-        getUser(id: ID!): User
-        getPosts: [Post]
-        getPost(id: ID!): Post
         getPeopleToFollow(id:String!): [User]
+        getFeed(userId:ID!):[Post],
     }
 
     type Mutation {
         createUser(username: String!, email: String!,auth0Id:String!,profilePicture:String): User
         followUser(userId:ID!,userToFollowId:ID!):User,
         unfollowUser(userId:ID!,userTounfollowId:ID!):User,
-        createPost(title: String!, content: String!, imageUrl: String!, author: String!): Post
+        createPost(title: String!, content: String!, imageUrl: String!, author: ID!): Post
     }
 
 `;

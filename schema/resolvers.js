@@ -12,8 +12,9 @@ const resolvers = {
             }
 
             const followingIds = user.following;
-            // return me all the posts of all the people that user follows
-            const posts = await Post.find({ author: { $in: followingIds } }).sort({ createdAt: -1 })
+            // get me all those posts where author of post is in the following of user
+            // or get all the post where userId is tagged
+            const posts = await Post.find({ $or: [{ author: { $in: followingIds } }, { mentions: userId }] }).sort({ createdAt: -1 })
             return posts;
         },
 
@@ -23,6 +24,14 @@ const resolvers = {
                 throw new Error('User not found');
             }
             return user.following;
+        },
+
+        getFollowersList: async (_, { id }) => {
+            const user = await User.findById(id).populate('followers');
+            if (!user) {
+                throw new Error('User not found');
+            }
+            return user.followers;
         },
 
         getUser: async (_, { userId }) => {

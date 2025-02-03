@@ -17,6 +17,14 @@ const resolvers = {
             return posts;
         },
 
+        getFollowingList: async (_, { id }) => {
+            const user = await User.findById(id).populate('following');
+            if (!user) {
+                throw new Error('User not found');
+            }
+            return user.following;
+        },
+
         getUsers: async () => {
             const users = await User.find();
             return users;
@@ -42,12 +50,12 @@ const resolvers = {
             return user;
         },
 
-        createPost: async (_, { title, content, imageUrl, author }) => {
+        createPost: async (_, { title, content, imageUrl, author, tags }) => {
             const user = await User.findById(author);
             if (!user) {
                 throw new Error("User not found");
             }
-            const post = new Post({ title, content, imageUrl, author });
+            const post = new Post({ title, content, imageUrl, author, mentions: tags });
             await post.save();
             user.posts.push(post._id);
             await user.save();
@@ -87,6 +95,11 @@ const resolvers = {
         author: async (post) => {
             const user = await User.findById(post.author);
             return user;
+        },
+
+        mentions: async (post) => {
+            const users = await User.find({ _id: { $in: post.mentions } });
+            return users;
         }
     },
 };

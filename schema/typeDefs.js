@@ -28,6 +28,8 @@ const typeDefs = gql`
         getFollowingList(id:ID!): [User]
         getPeopleToFollow(id:String!): [User]
         getFeed(userId:ID!):[Post],
+        getUser(userId:ID!):User,
+        getUserPosts(userId:ID!): [Post],
     }
 
     type Mutation {

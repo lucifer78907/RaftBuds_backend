@@ -25,6 +25,11 @@ const resolvers = {
             return user.following;
         },
 
+        getUser: async (_, { userId }) => {
+            const user = await User.findById(userId);
+            return user;
+        },
+
         getUsers: async () => {
             const users = await User.find();
             return users;
@@ -36,6 +41,11 @@ const resolvers = {
             // find all the users expect the user itself and the user NOT IN his following
             const users = await User.find({ $and: [{ _id: { $ne: id } }, { _id: { $nin: user.following } }] })
             return users;
+        },
+
+        getUserPosts: async (_, { userId }) => {
+            const user = await User.findById(userId).populate('posts')
+            return user.posts;
         }
     },
     Mutation: {
@@ -102,6 +112,17 @@ const resolvers = {
             return users;
         }
     },
+
+    User: {
+        followers: async (user) => {
+            const userProfile = await User.findById(user.id).populate('followers');
+            return userProfile.followers;
+        },
+        following: async (user) => {
+            const userProfile = await User.findById(user.id).populate('following');
+            return userProfile.following;
+        }
+    }
 };
 
 export default resolvers;

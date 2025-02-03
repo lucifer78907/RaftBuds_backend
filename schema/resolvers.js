@@ -4,6 +4,38 @@ import Post from "../models/Post.js";
 
 const resolvers = {
     Query: {
+        getFeedWithCursor: async (_, { userId, cursor, limit = 1 }) => {
+            const user = await User.findById(userId);
+            if (!user) {
+                throw new Error('User not found');
+            }
+
+            const followingIds = user.following;
+
+            // Create filter conditions
+            let filter = {
+                $or: [
+                    { author: { $in: followingIds } },  // Posts from people user follows
+                    { mentions: userId }               // Posts where user is tagged
+                ]
+            };
+
+            // Apply cursor-based pagination (if cursor exists)
+            if (cursor) {
+                filter.createdAt = { $lt: new Date(cursor) };  // Fetch posts before this timestamp
+            }
+
+            // Fetch posts in descending order (newest first)
+            const posts = await Post.find(filter)
+                .sort({ createdAt: -1 })
+                .limit(limit);
+
+            // Determine next cursor (createdAt of the last post)
+            const nextCursor = posts.length > 0 ? posts[posts.length - 1].createdAt.toISOString() : null;
+
+            return { posts, nextCursor };
+        },
+
         getFeed: async (_, { userId }) => {
             const user = await User.findById(userId);
 

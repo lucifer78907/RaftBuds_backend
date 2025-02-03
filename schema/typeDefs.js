@@ -23,6 +23,11 @@ const typeDefs = gql`
         mentions: [User]
     }
 
+    type FeedResponse {
+        posts: [Post!]!
+        nextCursor: String
+    }
+
     type Query {
         getUsers: [User]
         getUser(userId:ID!):User,
@@ -31,6 +36,7 @@ const typeDefs = gql`
         getFollowersList(id:ID!): [User]
         getPeopleToFollow(id:String!): [User]
         getFeed(userId:ID!):[Post],
+        getFeedWithCursor(userId: ID!, cursor: String, limit: Int = 1): FeedResponse!
     }
 
     type Mutation {

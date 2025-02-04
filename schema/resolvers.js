@@ -149,6 +149,7 @@ const resolvers = {
         },
 
         mentions: async (post) => {
+            // find all the users that are mentioned/tagged in a post
             const users = await User.find({ _id: { $in: post.mentions } });
             return users;
         }

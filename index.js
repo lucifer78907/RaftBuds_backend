@@ -40,4 +40,9 @@ async function startServer() {
     });
 }
 
+app.use((err, req, res, next) => {
+    console.error(err.message); // Log only the error message
+    res.status(500).send(err.message); // Send only the error message in the response
+});
+
 startServer();

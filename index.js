@@ -12,7 +12,10 @@ import resolvers from './schema/resolvers.js';
 dotenv.config();
 
 const app = express();
-app.use(cors());
+// app.use(cors());
+app.use(cors({
+    origin: 'https://raftbuds.web.app', // Replace with your frontend's origin
+}));
 app.use(express.json());
 
 async function startServer() {
